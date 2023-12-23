@@ -1,0 +1,125 @@
+{% extends 'Main/base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="product-details-area pt-100px pb-100px">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-sm-12 col-xs-12 mb-lm-30px mb-md-30px mb-sm-30px">
+                <!-- Swiper -->
+                <div class="swiper-container zoom-top">
+                    <div class="swiper-wrapper">
+                        {% for i in prod.images_set.all %}
+                            <div class="swiper-slide">
+                                <img class="img-responsive m-auto" src="/{{i.image}}" alt="">
+                                <a class="venobox full-preview" data-gall="myGallery" href="/{{i.image}}">
+                                    <i class="fa fa-arrows-alt" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="swiper-container mt-20px zoom-thumbs slider-nav-style-1 small-nav">
+                    <div class="swiper-wrapper">
+                        {% for i in prod.images_set.all %}
+                            <div class="swiper-slide">
+                                <img class="img-responsive m-auto" src="/{{i.image}}" alt="">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Add Arrows -->
+                    <div class="swiper-buttons">
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-12 col-xs-12" data-aos="fade-up" data-aos-delay="200">
+                <div class="product-details-content quickview-content ml-25px">
+                    <h2>{{prod.name}}</h2>
+                    <div class="pricing-meta">
+                        <ul class="d-flex">
+                            <li class="new-price">Rs.{{prod.price}}</li>
+                        </ul>
+                    </div>
+                    <div class="pro-details-rating-wrap">
+                        <div class="rating-product">
+                            &#9733;
+                            &#9733;
+                            &#9733;
+                            &#9733;
+                            &#9733;
+                        </div>
+                    </div>
+                    <div class="pro-details-categories-info pro-details-same-style d-flex m-0">
+                        <span>Categories: </span>
+                        <ul class="d-flex">
+                            <li><a href="#">{{prod.categories}}</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="pro-details-quality">
+                        <div class="cart-plus-minus">
+                            <input id="quantity" class="cart-plus-minus-box" type="text" name="qtybutton" value="1" />
+                            <div class="quantity-buttons">
+                                <button class="quantity-btn" onclick="decrementQuantity()">-</button>
+                                <button class="quantity-btn" onclick="incrementQuantity()">+</button>
+                            </div>
+                        </div>
+                        <div class="pro-details-cart">
+                            <form method="post" action="{% url 'cart_add' id=prod.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" id="cartQuantity" value="1">
+                                <button type="submit" class="add-cart" style="background-color: #4CAF90">Add To Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- product details description area start -->
+                <div class="description-review-wrapper">
+                    <div class="description-review-topbar nav">
+                        <button class="active" data-bs-toggle="tab" data-bs-target="#des-details1">Description</button>
+                    </div>
+                    <div class="tab-content description-review-bottom">
+                        <div id="des-details2" class="tab-pane"></div>
+                        <div id="des-details1" class="tab-pane active">
+                            <div class="product-description-wrapper">
+                                <p>{{prod.description | safe}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- product details description area end -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function incrementQuantity() {
+        var quantityInput = document.getElementById('quantity');
+        var currentQuantity = parseInt(quantityInput.value);
+        quantityInput.value = currentQuantity + 1;
+        updateCartQuantity();
+    }
+
+    function decrementQuantity() {
+        var quantityInput = document.getElementById('quantity');
+        var currentQuantity = parseInt(quantityInput.value);
+        if (currentQuantity > 1) {
+            quantityInput.value = currentQuantity - 1;
+            updateCartQuantity();
+        }
+    }
+
+    function updateCartQuantity() {
+        var quantityInput = document.getElementById('quantity');
+        var cartQuantityInput = document.getElementById('cartQuantity');
+        cartQuantityInput.value = quantityInput.value;
+
+        // Trigger a change event on the quantity input to ensure any attached event listeners are executed
+        var event = new Event('input', { bubbles: true });
+        quantityInput.dispatchEvent(event);
+    }
+</script>
+{% endblock %}
